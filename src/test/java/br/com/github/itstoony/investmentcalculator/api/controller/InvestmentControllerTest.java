@@ -112,6 +112,53 @@ public class InvestmentControllerTest {
 
     }
 
+    @Test
+    @DisplayName("Should update an investment")
+    public void updateInvestmentTest() throws Exception {
+        // scenery
+        Investment updatingInvestment = createNewInvestment();
+        updatingInvestment.setId(1L);
+
+        InvestmentDTO update = InvestmentDTO.builder()
+                .date(LocalDateTime.of(2023, 2, 22, 17, 33))
+                .value(new BigDecimal("500.00"))
+                .type(InvestmentType.LCA)
+                .build();
+
+        Investment updated = Investment.builder()
+                .id(1L)
+                .date(update.getDate())
+                .type(update.getType())
+                .value(update.getValue())
+                .build();
+
+        String json = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .writeValueAsString(update);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        String expectedDate = formatter.format(update.getDate().truncatedTo(ChronoUnit.SECONDS));
+
+        BDDMockito.given( service.findById(1L) ).willReturn(updatingInvestment);
+        BDDMockito.given( service.update( Mockito.any(Investment.class), Mockito.any(InvestmentDTO.class) ) ).willReturn(updated);
+
+        // execution
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(API.concat("/1"))
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        // validation
+        mvc
+                .perform(request)
+                .andExpect( jsonPath("id").value(1L) )
+                .andExpect( jsonPath("date").value(expectedDate) )
+                .andExpect( jsonPath("value").value(update.getValue().setScale(1, RoundingMode.HALF_UP)))
+                .andExpect( jsonPath("type").value(update.getType().toString()));
+
+    }
+
     private static InvestmentDTO createNewInvestmentDTO() {
         return InvestmentDTO.builder()
                 .date(LocalDateTime.of(2023, 1, 15, 15, 26))

@@ -26,7 +26,7 @@ public class InvestmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public InvestmentDTO newInvestment(@RequestBody InvestmentDTO dto) {
+    public InvestmentDTO newInvestment( @RequestBody InvestmentDTO dto ) {
 
         Investment investment = modelMapper.map(dto, Investment.class);
 
@@ -51,4 +51,12 @@ public class InvestmentController {
 
     }
 
+    @PutMapping("/{id}")
+    public InvestmentDTO update( @PathVariable Long id, @RequestBody InvestmentDTO dto) {
+        Investment updating = investmentService.findById(id);
+
+        Investment updated = investmentService.update(updating, dto);
+
+        return modelMapper.map(updated, InvestmentDTO.class);
+    }
 }
