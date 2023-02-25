@@ -1,6 +1,7 @@
 package br.com.github.itstoony.investmentcalculator.api.controller;
 
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentDTO;
+import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentFilterDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
 import br.com.github.itstoony.investmentcalculator.api.model.enums.InvestmentType;
 import br.com.github.itstoony.investmentcalculator.api.model.service.InvestmentService;
@@ -14,6 +15,8 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -26,7 +29,9 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,7 +50,7 @@ public class InvestmentControllerTest {
 
     @Test
     @DisplayName("Should create an investment")
-    public void investTest() throws Exception {
+    public void newInvestmentTest() throws Exception {
         // scenery
         InvestmentDTO dto = createNewInvestmentDTO();
 
@@ -76,6 +81,34 @@ public class InvestmentControllerTest {
                 .andExpect(jsonPath("value").value(dto.getValue().setScale(1, RoundingMode.HALF_UP)))
                 .andExpect(jsonPath("type").value(InvestmentType.CDB.toString()))
                 .andExpect(jsonPath("date").value(expectedDate));
+
+    }
+
+    @Test
+    @DisplayName("Should return a list with all investments")
+    public void getAllInvestmentsTest() throws Exception {
+        // scenery
+        Investment investment = createNewInvestment();
+        investment.setId(1L);
+
+        BDDMockito.given( service.find(Mockito.any(InvestmentFilterDTO.class), Mockito.any(Pageable.class) ))
+                .willReturn(new PageImpl<>(Collections.singletonList(investment), Pageable.ofSize( 20), 1));
+
+        String queryString = String.format("?dateTime=%s", investment.getDate());
+
+        // execution
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(API.concat(queryString))
+                .accept(MediaType.APPLICATION_JSON);
+
+        // validation
+        mvc
+                .perform(request)
+                .andExpect( status().isOk() )
+                .andExpect( jsonPath("content", hasSize(1)) )
+                .andExpect( jsonPath("totalElements").value(1) )
+                .andExpect( jsonPath("pageable.pageSize").value(20) )
+                .andExpect( jsonPath("pageable.pageNumber").value(0) );
 
     }
 

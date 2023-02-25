@@ -1,6 +1,9 @@
 package br.com.github.itstoony.investmentcalculator.api.model.service;
 
+import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentFilterDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,4 +13,7 @@ public class InvestmentService {
         return null;
     }
 
+    public Page<Investment> find(InvestmentFilterDTO filterDTO, Pageable pageable) {
+        return null;
+    }
 }
