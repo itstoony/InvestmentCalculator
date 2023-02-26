@@ -3,6 +3,8 @@ package br.com.github.itstoony.investmentcalculator.api.service;
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentFilterDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
+import br.com.github.itstoony.investmentcalculator.api.repository.InvestmentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -10,10 +12,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class InvestmentService {
 
+    private final InvestmentRepository repository;
+
     public Investment save(Investment investment) {
-        return null;
+        return repository.save(investment);
     }
 
     public Page<Investment> find(InvestmentFilterDTO filterDTO, Pageable pageable) {
