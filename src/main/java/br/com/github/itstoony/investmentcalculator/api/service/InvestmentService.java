@@ -1,4 +1,4 @@
-package br.com.github.itstoony.investmentcalculator.api.model.service;
+package br.com.github.itstoony.investmentcalculator.api.service;
 
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentFilterDTO;

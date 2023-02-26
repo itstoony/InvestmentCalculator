@@ -1,6 +1,7 @@
 package br.com.github.itstoony.investmentcalculator.api.model.entity;
 
 import br.com.github.itstoony.investmentcalculator.api.model.enums.InvestmentType;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,14 +14,21 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 public class Investment {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column
     private BigDecimal value;
 
+    @Column
+    @Enumerated(EnumType.STRING)
     private InvestmentType type;
 
+    @Column
     private LocalDateTime date;
 
 }

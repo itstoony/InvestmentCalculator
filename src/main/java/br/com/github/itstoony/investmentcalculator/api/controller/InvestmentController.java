@@ -3,7 +3,7 @@ package br.com.github.itstoony.investmentcalculator.api.controller;
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentFilterDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentDTO;
-import br.com.github.itstoony.investmentcalculator.api.model.service.InvestmentService;
+import br.com.github.itstoony.investmentcalculator.api.service.InvestmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
