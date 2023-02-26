@@ -144,7 +144,7 @@ public class InvestmentControllerTest {
 
         // execution
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(API.concat("/1"))
+                .put(API.concat("/" + 1L))
                 .content(json)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
@@ -157,6 +157,27 @@ public class InvestmentControllerTest {
                 .andExpect( jsonPath("value").value(update.getValue().setScale(1, RoundingMode.HALF_UP)))
                 .andExpect( jsonPath("type").value(update.getType().toString()));
 
+    }
+
+    @Test
+    @DisplayName("Should delete an investment")
+    public void deleteInvestmentTest() throws Exception {
+        // scenery
+        Long id = 1L;
+
+        Investment investment = createNewInvestment();
+        investment.setId(id);
+
+        BDDMockito.given( service.findById(id) ).willReturn(investment);
+
+        // execution
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(API.concat("/" + id));
+
+        // validation
+        mvc
+                .perform(request)
+                .andExpect( status().isNoContent() );
     }
 
     private static InvestmentDTO createNewInvestmentDTO() {

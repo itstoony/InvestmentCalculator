@@ -26,4 +26,7 @@ public class InvestmentService {
         return null;
     }
 
+    public void delete(Investment investment) {
+
+    }
 }

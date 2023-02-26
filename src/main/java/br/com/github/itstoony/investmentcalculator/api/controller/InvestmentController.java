@@ -59,4 +59,12 @@ public class InvestmentController {
 
         return modelMapper.map(updated, InvestmentDTO.class);
     }
+
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        Investment investment = investmentService.findById(id);
+
+        investmentService.delete(investment);
+    }
 }
