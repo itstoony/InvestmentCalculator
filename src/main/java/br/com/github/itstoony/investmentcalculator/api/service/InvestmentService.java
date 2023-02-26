@@ -30,7 +30,16 @@ public class InvestmentService {
     }
 
     public Investment update(Investment investment, InvestmentDTO update) {
-        return null;
+
+        if (investment == null || investment.getId() == null) {
+            throw new IllegalArgumentException("Can't update an unsaved investment");
+        }
+
+        investment.setType(Optional.ofNullable(update.getType()).orElse(investment.getType()));
+        investment.setValue(Optional.ofNullable(update.getValue()).orElse(investment.getValue()));
+        investment.setDate(Optional.ofNullable(update.getDate()).orElse(investment.getDate()));
+
+        return repository.save(investment);
     }
 
     public void delete(Investment investment) {

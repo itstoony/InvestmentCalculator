@@ -4,7 +4,6 @@ import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
 import br.com.github.itstoony.investmentcalculator.api.model.enums.InvestmentType;
 import br.com.github.itstoony.investmentcalculator.api.repository.InvestmentRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +19,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
@@ -102,7 +102,7 @@ public class InvestmentServiceTest {
         Investment investment = Investment.builder().id(1L).build();
 
         // execution
-        Assertions.assertDoesNotThrow( () -> service.delete(investment) );
+        assertDoesNotThrow( () -> service.delete(investment) );
 
         // validation
         verify(repository, times(1)).delete(investment);
@@ -110,7 +110,7 @@ public class InvestmentServiceTest {
     }
 
     @Test
-    @DisplayName("Should throw an exception when trying to delete an invalid investment")
+    @DisplayName("Should throw an exception when trying to delete an unsaved investment")
     public void deleteInvalidInvestmentTest() {
         // scenery
         Investment investment = createNewInvestment();
@@ -124,6 +124,57 @@ public class InvestmentServiceTest {
         assertThat(ex).hasMessage(error);
 
         verify(repository, never()).delete(investment);
+
+    }
+
+    @Test
+    @DisplayName("Should update an investment")
+    public void updateInvestmentTest() {
+        // scenery
+        Long id = 1L;
+
+        Investment updatingInvestment = createNewInvestment();
+        updatingInvestment.setId(id);
+
+        InvestmentDTO update = createNewInvestmentDTO();
+
+        Investment updatedInvestment = Investment.builder()
+                .id(id)
+                .value(update.getValue())
+                .type(update.getType())
+                .date(update.getDate())
+                .build();
+
+        BDDMockito.given( repository.save(any()) ).willReturn(updatedInvestment);
+
+        // execution
+        Investment returnedInvestment = service.update(updatingInvestment, update);
+
+        // validation
+        assertThat(returnedInvestment.getId()).isEqualTo(id);
+        assertThat(returnedInvestment.getValue()).isEqualTo(update.getValue());
+        assertThat(returnedInvestment.getType()).isEqualTo(update.getType());
+        assertThat(returnedInvestment.getDate()).isEqualTo(update.getDate());
+
+        verify(repository, times(1)).save(any());
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when trying to update an unsaved investment")
+    public void updateUnsavedInvestment() {
+        // scenery
+        Investment investment = createNewInvestment();
+        InvestmentDTO update = createNewInvestmentDTO();
+        String error = "Can't update an unsaved investment";
+
+        // execution
+        Throwable ex = catchThrowable(() -> service.update(investment, update));
+
+        // validation
+        assertThat(ex).isInstanceOf(IllegalArgumentException.class);
+        assertThat(ex).hasMessage(error);
+
+        verify(repository, never()).save(any());
 
     }
 
