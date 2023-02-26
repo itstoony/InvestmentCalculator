@@ -1,6 +1,7 @@
 package br.com.github.itstoony.investmentcalculator.api.service;
 
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentDTO;
+import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentFilterDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
 import br.com.github.itstoony.investmentcalculator.api.model.enums.InvestmentType;
 import br.com.github.itstoony.investmentcalculator.api.repository.InvestmentRepository;
@@ -10,11 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -177,6 +183,37 @@ public class InvestmentServiceTest {
         verify(repository, never()).save(any());
 
     }
+
+    @Test
+    @DisplayName("Should filter investments by date")
+    public void findTest() {
+        // scenery
+        InvestmentFilterDTO filterDTO = InvestmentFilterDTO.builder()
+                .dateTime(LocalDateTime.of(2023, 1, 15, 15, 26))
+                .build();
+
+        Investment investment = createNewInvestment();
+        investment.setId(1L);
+
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<Investment> list = Collections.singletonList(investment);
+
+        PageImpl<Investment> page = new PageImpl<>(list, pageRequest, 1);
+
+        when( repository.findByDate(filterDTO.getDateTime(), pageRequest) ).thenReturn(page);
+
+        // execution
+        Page<Investment> result = service.find(filterDTO, pageRequest);
+
+        // validation
+        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getContent()).isEqualTo(list);
+        assertThat(result.getPageable().getPageNumber()).isEqualTo(0);
+        assertThat(result.getPageable().getPageSize()).isEqualTo(10);
+
+    }
+
+
 
     private static InvestmentDTO createNewInvestmentDTO() {
         return InvestmentDTO.builder()

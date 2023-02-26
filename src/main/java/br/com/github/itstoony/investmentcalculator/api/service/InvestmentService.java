@@ -22,7 +22,7 @@ public class InvestmentService {
     }
 
     public Page<Investment> find(InvestmentFilterDTO filterDTO, Pageable pageable) {
-        return null;
+        return repository.findByDate(filterDTO.getDateTime(), pageable);
     }
 
     public Optional<Investment> findById(Long id) {
