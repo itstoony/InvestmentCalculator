@@ -2,6 +2,7 @@ package br.com.github.itstoony.investmentcalculator.api.controller;
 
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentFilterDTO;
+import br.com.github.itstoony.investmentcalculator.api.model.dto.UpdatingInvestmentDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
 import br.com.github.itstoony.investmentcalculator.api.model.enums.InvestmentType;
 import br.com.github.itstoony.investmentcalculator.api.model.service.InvestmentService;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -139,7 +141,7 @@ public class InvestmentControllerTest {
         Investment updatingInvestment = createNewInvestment();
         updatingInvestment.setId(1L);
 
-        InvestmentDTO update = InvestmentDTO.builder()
+        UpdatingInvestmentDTO update = UpdatingInvestmentDTO.builder()
                 .date(LocalDateTime.of(2023, 2, 22, 17, 33))
                 .value(new BigDecimal("500.00"))
                 .type(InvestmentType.LCA)
@@ -159,7 +161,7 @@ public class InvestmentControllerTest {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         String expectedDate = formatter.format(update.getDate().truncatedTo(ChronoUnit.SECONDS));
 
-        BDDMockito.given( service.findById(1L) ).willReturn(updatingInvestment);
+        BDDMockito.given( service.findById(1L) ).willReturn(Optional.of(updatingInvestment));
         BDDMockito.given( service.update( Mockito.any(Investment.class), Mockito.any(InvestmentDTO.class) ) ).willReturn(updated);
 
         // execution
@@ -180,6 +182,31 @@ public class InvestmentControllerTest {
     }
 
     @Test
+    @DisplayName("Should return 'not found' when trying to update an invalid investment")
+    public void updateInvalidIdInvestmentTest() throws Exception {
+        // scenery
+        Long id = 1L;
+
+        String json = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .writeValueAsString(new InvestmentDTO());
+
+        BDDMockito.given( service.findById(id) ).willReturn(Optional.empty());
+
+        // execution
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(API.concat("/" + id))
+                .content(json)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+        // validation
+        mvc
+                .perform(request)
+                .andExpect( status().isNotFound() );
+    }
+
+    @Test
     @DisplayName("Should delete an investment")
     public void deleteInvestmentTest() throws Exception {
         // scenery
@@ -188,7 +215,7 @@ public class InvestmentControllerTest {
         Investment investment = createNewInvestment();
         investment.setId(id);
 
-        BDDMockito.given( service.findById(id) ).willReturn(investment);
+        BDDMockito.given( service.findById(id) ).willReturn(Optional.of(investment));
 
         // execution
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders

@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -54,8 +55,7 @@ public class InvestmentController {
 
     @PutMapping("/{id}")
     public InvestmentDTO update( @PathVariable Long id, @RequestBody InvestmentDTO dto) {
-        Investment updating = investmentService.findById(id);
-
+        Investment updating = investmentService.findById(id).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Investment updated = investmentService.update(updating, dto);
 
         return modelMapper.map(updated, InvestmentDTO.class);
@@ -64,8 +64,7 @@ public class InvestmentController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        Investment investment = investmentService.findById(id);
-
+        Investment investment = investmentService.findById(id).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         investmentService.delete(investment);
     }
 }

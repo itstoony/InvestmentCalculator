@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class InvestmentService {
 
@@ -18,8 +20,8 @@ public class InvestmentService {
         return null;
     }
 
-    public Investment findById(Long id) {
-        return null;
+    public Optional<Investment> findById(Long id) {
+        return Optional.empty();
     }
 
     public Investment update(Investment investment, InvestmentDTO update) {
