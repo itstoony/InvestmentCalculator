@@ -227,6 +227,25 @@ public class InvestmentControllerTest {
                 .andExpect( status().isNoContent() );
     }
 
+    @Test
+    @DisplayName("Should return 'not found' when trying to delete an invalid investment")
+    public void deleteInvalidInvestmentTest() throws Exception {
+        // scenery
+        Long id = 1L;
+
+        BDDMockito.given( service.findById(id) ).willReturn(Optional.empty());
+
+        // execution
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(API.concat("/" + id));
+
+        // validation
+        mvc
+                .perform(request)
+                .andExpect( status().isNotFound() );
+
+    }
+
     private static InvestmentDTO createNewInvestmentDTO() {
         return InvestmentDTO.builder()
                 .date(LocalDateTime.of(2023, 1, 15, 15, 26))
