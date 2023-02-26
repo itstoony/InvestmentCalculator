@@ -34,6 +34,10 @@ public class InvestmentService {
     }
 
     public void delete(Investment investment) {
+        if (investment == null || investment.getId() == null ) {
+            throw new IllegalArgumentException("Can't delete an unsaved investment");
+        }
 
+        repository.delete(investment);
     }
 }

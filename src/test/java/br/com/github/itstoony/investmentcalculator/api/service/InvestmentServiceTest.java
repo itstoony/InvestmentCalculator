@@ -4,6 +4,7 @@ import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
 import br.com.github.itstoony.investmentcalculator.api.model.enums.InvestmentType;
 import br.com.github.itstoony.investmentcalculator.api.repository.InvestmentRepository;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
@@ -89,6 +92,38 @@ public class InvestmentServiceTest {
 
         // validation
         assertThat(foundInvestment).isEmpty();
+
+    }
+
+    @Test
+    @DisplayName("Should delete an investment")
+    public void deleteInvestmentTest() {
+        // scenery
+        Investment investment = Investment.builder().id(1L).build();
+
+        // execution
+        Assertions.assertDoesNotThrow( () -> service.delete(investment) );
+
+        // validation
+        verify(repository, times(1)).delete(investment);
+
+    }
+
+    @Test
+    @DisplayName("Should throw an exception when trying to delete an invalid investment")
+    public void deleteInvalidInvestmentTest() {
+        // scenery
+        Investment investment = createNewInvestment();
+        String error = "Can't delete an unsaved investment";
+
+        // execution
+        Throwable ex = catchThrowable( () -> service.delete(investment) );
+
+        // validation
+        assertThat(ex).isInstanceOf(IllegalArgumentException.class);
+        assertThat(ex).hasMessage(error);
+
+        verify(repository, never()).delete(investment);
 
     }
 
