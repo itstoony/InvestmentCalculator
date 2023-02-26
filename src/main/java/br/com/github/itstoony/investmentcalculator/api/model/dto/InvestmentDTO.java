@@ -1,6 +1,7 @@
 package br.com.github.itstoony.investmentcalculator.api.model.dto;
 
 import br.com.github.itstoony.investmentcalculator.api.model.enums.InvestmentType;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,10 +18,13 @@ public class InvestmentDTO {
 
     private Long id;
 
+    @NotNull
     private BigDecimal value;
 
+    @NotNull
     private InvestmentType type;
 
+    @NotNull
     private LocalDateTime date;
 
 }

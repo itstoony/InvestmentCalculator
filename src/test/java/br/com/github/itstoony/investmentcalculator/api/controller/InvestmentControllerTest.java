@@ -50,7 +50,7 @@ public class InvestmentControllerTest {
 
     @Test
     @DisplayName("Should create an investment")
-    public void newInvestmentTest() throws Exception {
+    public void createInvestmentTest() throws Exception {
         // scenery
         InvestmentDTO dto = createNewInvestmentDTO();
 
@@ -82,6 +82,26 @@ public class InvestmentControllerTest {
                 .andExpect(jsonPath("type").value(InvestmentType.CDB.toString()))
                 .andExpect(jsonPath("date").value(expectedDate));
 
+    }
+
+    @Test
+    @DisplayName("Should throw a validation error when trying to create an investment without required fields")
+    public void createInvalidInvestmentTest() throws Exception {
+        // scenery
+        String json = new ObjectMapper().writeValueAsString(new InvestmentDTO());
+
+        // execution
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(API)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(json);
+
+        // validation
+        mvc
+                .perform(request)
+                .andExpect( status().isBadRequest() )
+                .andExpect( jsonPath("errors", hasSize(3)) ); // has "3" because 3 fields are validated in InvestmentDTO
     }
 
     @Test

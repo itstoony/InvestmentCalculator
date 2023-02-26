@@ -4,6 +4,7 @@ import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentFilte
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
 import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.service.InvestmentService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ public class InvestmentController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public InvestmentDTO newInvestment( @RequestBody InvestmentDTO dto ) {
+    public InvestmentDTO newInvestment( @RequestBody @Valid InvestmentDTO dto ) {
 
         Investment investment = modelMapper.map(dto, Investment.class);
 
