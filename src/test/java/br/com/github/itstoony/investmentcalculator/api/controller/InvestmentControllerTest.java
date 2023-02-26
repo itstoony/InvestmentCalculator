@@ -5,7 +5,7 @@ import br.com.github.itstoony.investmentcalculator.api.model.dto.InvestmentFilte
 import br.com.github.itstoony.investmentcalculator.api.model.dto.UpdatingInvestmentDTO;
 import br.com.github.itstoony.investmentcalculator.api.model.entity.Investment;
 import br.com.github.itstoony.investmentcalculator.api.model.enums.InvestmentType;
-import br.com.github.itstoony.investmentcalculator.api.model.service.InvestmentService;
+import br.com.github.itstoony.investmentcalculator.api.service.InvestmentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.DisplayName;
