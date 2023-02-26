@@ -26,7 +26,7 @@ public class InvestmentService {
     }
 
     public Optional<Investment> findById(Long id) {
-        return Optional.empty();
+        return repository.findById(id);
     }
 
     public Investment update(Investment investment, InvestmentDTO update) {

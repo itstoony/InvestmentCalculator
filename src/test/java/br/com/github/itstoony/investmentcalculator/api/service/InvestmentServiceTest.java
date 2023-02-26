@@ -15,6 +15,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -49,6 +50,45 @@ public class InvestmentServiceTest {
         assertThat(savedInvestment.getDate()).isEqualTo(investment.getDate());
         assertThat(savedInvestment.getValue()).isEqualTo(investment.getValue());
         assertThat(savedInvestment.getType()).isEqualTo(investment.getType());
+
+    }
+
+    @Test
+    @DisplayName("Should find an investment by it's id")
+    public void findByIdTest() {
+        // scenery
+        Long id = 1L;
+
+        Investment investment = createNewInvestment();
+        investment.setId(id);
+
+        BDDMockito.given( repository.findById(id) ).willReturn( Optional.of(investment) );
+
+        // execution
+        Optional<Investment> foundInvestment = service.findById(id);
+
+        // validation
+        assertThat(foundInvestment).isPresent();
+        assertThat(foundInvestment.get().getId()).isEqualTo(id);
+        assertThat(foundInvestment.get().getType()).isEqualTo(investment.getType());
+        assertThat(foundInvestment.get().getDate()).isEqualTo(investment.getDate());
+        assertThat(foundInvestment.get().getValue()).isEqualTo(investment.getValue());
+
+    }
+
+    @Test
+    @DisplayName("Should return empty when trying to find an invalid investment")
+    public void findInvalidInvestmentByIdTest() {
+        // scenery
+        Long id = 1L;
+
+        BDDMockito.given( repository.findById(id) ).willReturn(Optional.empty());
+
+        // execution
+        Optional<Investment> foundInvestment = service.findById(id);
+
+        // validation
+        assertThat(foundInvestment).isEmpty();
 
     }
 
