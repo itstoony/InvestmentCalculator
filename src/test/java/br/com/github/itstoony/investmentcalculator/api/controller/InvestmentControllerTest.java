@@ -151,7 +151,7 @@ public class InvestmentControllerTest {
                 .id(1L)
                 .date(update.getDate())
                 .type(update.getType())
-                .value(update.getValue())
+                .investmentValue(update.getValue())
                 .build();
 
         String json = new ObjectMapper()
@@ -258,7 +258,7 @@ public class InvestmentControllerTest {
         return Investment.builder()
                 .type(InvestmentType.CDB)
                 .date(LocalDateTime.of(2023, 1, 15, 15, 26))
-                .value(new BigDecimal("200.00"))
+                .investmentValue(new BigDecimal("200.00"))
                 .build();
     }
 

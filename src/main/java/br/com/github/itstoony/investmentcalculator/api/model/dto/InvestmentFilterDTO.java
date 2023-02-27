@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class InvestmentFilterDTO {
 
-    private LocalDateTime dateTime;
+    private LocalDateTime begin;
+
+    private LocalDateTime end;
 
 }
