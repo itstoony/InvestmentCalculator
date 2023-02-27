@@ -22,7 +22,7 @@ public class InvestmentService {
     }
 
     public Page<Investment> find(InvestmentFilterDTO filterDTO, Pageable pageable) {
-        return repository.findByDate(filterDTO.getDateTime(), pageable);
+        return repository.findByDate(filterDTO.getBegin(), filterDTO.getEnd(), pageable);
     }
 
     public Optional<Investment> findById(Long id) {
@@ -36,7 +36,7 @@ public class InvestmentService {
         }
 
         investment.setType(Optional.ofNullable(update.getType()).orElse(investment.getType()));
-        investment.setValue(Optional.ofNullable(update.getValue()).orElse(investment.getValue()));
+        investment.setInvestmentValue(Optional.ofNullable(update.getValue()).orElse(investment.getInvestmentValue()));
         investment.setDate(Optional.ofNullable(update.getDate()).orElse(investment.getDate()));
 
         return repository.save(investment);

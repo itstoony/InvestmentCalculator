@@ -57,7 +57,7 @@ public class InvestmentServiceTest {
         // validation
         assertThat(savedInvestment.getId()).isNotNull();
         assertThat(savedInvestment.getDate()).isEqualTo(investment.getDate());
-        assertThat(savedInvestment.getValue()).isEqualTo(investment.getValue());
+        assertThat(savedInvestment.getInvestmentValue()).isEqualTo(investment.getInvestmentValue());
         assertThat(savedInvestment.getType()).isEqualTo(investment.getType());
 
     }
@@ -81,7 +81,7 @@ public class InvestmentServiceTest {
         assertThat(foundInvestment.get().getId()).isEqualTo(id);
         assertThat(foundInvestment.get().getType()).isEqualTo(investment.getType());
         assertThat(foundInvestment.get().getDate()).isEqualTo(investment.getDate());
-        assertThat(foundInvestment.get().getValue()).isEqualTo(investment.getValue());
+        assertThat(foundInvestment.get().getInvestmentValue()).isEqualTo(investment.getInvestmentValue());
 
     }
 
@@ -146,7 +146,7 @@ public class InvestmentServiceTest {
 
         Investment updatedInvestment = Investment.builder()
                 .id(id)
-                .value(update.getValue())
+                .investmentValue(update.getValue())
                 .type(update.getType())
                 .date(update.getDate())
                 .build();
@@ -158,7 +158,7 @@ public class InvestmentServiceTest {
 
         // validation
         assertThat(returnedInvestment.getId()).isEqualTo(id);
-        assertThat(returnedInvestment.getValue()).isEqualTo(update.getValue());
+        assertThat(returnedInvestment.getInvestmentValue()).isEqualTo(update.getValue());
         assertThat(returnedInvestment.getType()).isEqualTo(update.getType());
         assertThat(returnedInvestment.getDate()).isEqualTo(update.getDate());
 
@@ -189,7 +189,7 @@ public class InvestmentServiceTest {
     public void findTest() {
         // scenery
         InvestmentFilterDTO filterDTO = InvestmentFilterDTO.builder()
-                .dateTime(LocalDateTime.of(2023, 1, 15, 15, 26))
+                .begin(LocalDateTime.of(2023, 1, 15, 15, 26))
                 .build();
 
         Investment investment = createNewInvestment();
@@ -200,7 +200,7 @@ public class InvestmentServiceTest {
 
         PageImpl<Investment> page = new PageImpl<>(list, pageRequest, 1);
 
-        when( repository.findByDate(filterDTO.getDateTime(), pageRequest) ).thenReturn(page);
+        when( repository.findByDate(filterDTO.getBegin(), filterDTO.getEnd(), pageRequest) ).thenReturn(page);
 
         // execution
         Page<Investment> result = service.find(filterDTO, pageRequest);
@@ -227,7 +227,7 @@ public class InvestmentServiceTest {
         return Investment.builder()
                 .type(InvestmentType.CDB)
                 .date(LocalDateTime.of(2023, 1, 15, 15, 26))
-                .value(new BigDecimal("200.00"))
+                .investmentValue(new BigDecimal("200.00"))
                 .build();
     }
 

@@ -15,20 +15,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "investment")
 public class Investment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private BigDecimal value;
+    @Column(name = "investmentValue")
+    private BigDecimal investmentValue;
 
-    @Column
+    @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private InvestmentType type;
 
-    @Column
+    @Column(name = "date")
     private LocalDateTime date;
 
 }
