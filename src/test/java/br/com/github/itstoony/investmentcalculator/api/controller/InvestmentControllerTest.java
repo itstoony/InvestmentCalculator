@@ -39,10 +39,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @ActiveProfiles("test")
 @ExtendWith(SpringExtension.class)
-@WebMvcTest
+@WebMvcTest(controllers = InvestmentController.class)
 public class InvestmentControllerTest {
 
-    static String API = "/api";
+    static String API = "/investment/api";
 
     @Autowired
     MockMvc mvc;
